@@ -237,7 +237,7 @@ export function CalculatorFlow({ config }: { config: CalculatorConfig }) {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
+                  className="cursor-pointer text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
                 >
                   Back to my inputs
                 </button>

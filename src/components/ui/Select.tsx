@@ -9,7 +9,7 @@ export const Select = forwardRef<
     <select
       ref={ref}
       className={cn(
-        "h-10 rounded-lg border border-border bg-background/60 px-3 text-sm text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30",
+        "h-10 cursor-pointer rounded-lg border border-border bg-background/60 px-3 text-sm text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30",
         className,
       )}
       {...props}

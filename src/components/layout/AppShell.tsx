@@ -102,7 +102,7 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
               type="button"
               onClick={toggleColorMode}
               aria-label="Toggle color theme"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-border text-muted transition-colors hover:text-foreground"
+              className="grid h-10 w-10 cursor-pointer place-items-center rounded-lg border border-border text-muted transition-colors hover:text-foreground"
             >
               {colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
             </button>
