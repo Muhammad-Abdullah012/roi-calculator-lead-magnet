@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useCalculatorStore, type ColorMode } from "@/store/calculator-store";
-import { Select } from "@/components/ui/Select";
+import { SelectMenu } from "@/components/ui/SelectMenu";
 import type { CurrencyDef } from "@/lib/schema";
 
 interface AppShellProps {
@@ -85,18 +85,16 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
 
           <div className="flex items-center gap-2">
             {currencies.length > 1 && (
-              <Select
-                aria-label="Select currency"
+              <SelectMenu
+                ariaLabel="Select currency"
                 value={currencyCode ?? currencies[0].code}
-                onChange={(event) => setCurrencyCode(event.target.value)}
+                onChange={setCurrencyCode}
                 className="hidden sm:block"
-              >
-                {currencies.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.symbol} {currency.code}
-                  </option>
-                ))}
-              </Select>
+                options={currencies.map((currency) => ({
+                  value: currency.code,
+                  label: `${currency.symbol} ${currency.code}`,
+                }))}
+              />
             )}
             <button
               type="button"
