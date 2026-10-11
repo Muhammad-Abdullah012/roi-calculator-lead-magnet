@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { useCalculatorStore, type ColorMode } from "@/store/calculator-store";
-import { Select } from "@/components/ui/Select";
+import { SelectMenu } from "@/components/ui/SelectMenu";
+import { BookButton } from "@/components/booking/BookButton";
 import type { CurrencyDef } from "@/lib/schema";
+import type { ResolvedBooking } from "@/lib/booking";
 
 interface AppShellProps {
   brandName: string;
   cta: { buttonLabel: string; url: string };
+  booking?: ResolvedBooking | null;
   currencies: CurrencyDef[];
   children: React.ReactNode;
 }
@@ -30,11 +33,14 @@ function MoonIcon() {
   );
 }
 
-export function AppShell({ brandName, cta, currencies, children }: AppShellProps) {
+export function AppShell({ brandName, cta, booking, currencies, children }: AppShellProps) {
   const colorMode = useCalculatorStore((s) => s.colorMode);
   const toggleColorMode = useCalculatorStore((s) => s.toggleColorMode);
   const currencyCode = useCalculatorStore((s) => s.currencyCode);
   const setCurrencyCode = useCalculatorStore((s) => s.setCurrencyCode);
+  const lead = useCalculatorStore((s) => s.lead);
+  const prefill =
+    lead.name || lead.email ? { name: lead.name, email: lead.email } : undefined;
 
   useEffect(() => {
     // Read persisted preferences once, then only persist *future* changes.
@@ -85,18 +91,16 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
 
           <div className="flex items-center gap-2">
             {currencies.length > 1 && (
-              <Select
-                aria-label="Select currency"
+              <SelectMenu
+                ariaLabel="Select currency"
                 value={currencyCode ?? currencies[0].code}
-                onChange={(event) => setCurrencyCode(event.target.value)}
+                onChange={setCurrencyCode}
                 className="hidden sm:block"
-              >
-                {currencies.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.symbol} {currency.code}
-                  </option>
-                ))}
-              </Select>
+                options={currencies.map((currency) => ({
+                  value: currency.code,
+                  label: `${currency.symbol} ${currency.code}`,
+                }))}
+              />
             )}
             <button
               type="button"
@@ -117,14 +121,24 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
           <span>
             © {new Date().getFullYear()} {brandName}. Built for founders who hate leaking revenue.
           </span>
-          <a
-            href={cta.url}
-            className="font-medium text-primary hover:underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {cta.buttonLabel}
-          </a>
+          {booking && booking.ctaMode === "popup" ? (
+            <BookButton
+              booking={booking}
+              label={cta.buttonLabel}
+              prefill={prefill}
+              unstyled
+              className="cursor-pointer font-medium text-primary hover:underline"
+            />
+          ) : (
+            <a
+              href={cta.url}
+              className="font-medium text-primary hover:underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {cta.buttonLabel}
+            </a>
+          )}
         </div>
       </footer>
     </div>

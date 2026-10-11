@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@hookform/resolvers": "^5.9.1",
     "expr-eval": "^2.0.2",
     "framer-motion": "^14.1.0",

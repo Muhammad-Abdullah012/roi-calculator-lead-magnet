@@ -105,6 +105,29 @@ In short: open a Sheet → Extensions → Apps Script → paste the file → run
 A hidden honeypot field (`_gotcha`) blocks most bots. Without any env vars the API
 accepts the lead, logs it, and continues — so the app is fully usable out of the box.
 
+## Booking (Cal.com)
+
+Add an inline booking calendar to the results page and turn the CTA into a Cal.com
+popup. Set it up under the top-level `booking` key:
+
+```jsonc
+"booking": {
+  "enabled": true,
+  "calLink": "your-username/retention-audit", // username/event-slug
+  "namespace": "retention-audit",
+  "layout": "month_view",       // month_view | week_view | column_view
+  "title": "Book your free retention audit",
+  "description": "Pick a time that works…",
+  "inline": true,               // render the calendar on the results page
+  "ctaMode": "popup"            // "popup" (modal) | "link" (uses cta.url)
+}
+```
+
+The embed is pre-filled with the lead's name/email, follows light/dark mode, and uses
+your brand color. Booking is optional — remove `booking` (or set `enabled: false`) and
+the CTA falls back to the plain `cta.url` link. Set `NEXT_PUBLIC_CAL_LINK` to override
+`calLink` per deployment without editing the config.
+
 ## Making it your own calculator
 
 1. Edit `config/calculator.config.json` — copy, inputs, formulas, metrics, charts.
@@ -125,8 +148,9 @@ src/
   components/
     calculator/                 # flow, steps, inputs, lead form
     results/                    # dashboard, metric cards, charts
+    booking/                    # Cal.com inline embed + popup button
     layout/                     # app shell, CTA
-    ui/                         # button, card, input, label, select
+    ui/                         # button, card, input, label, select menu
   lib/
     schema.ts                   # Zod config schema (the template contract)
     formula-engine.ts           # safe expression eval + dependency graph
@@ -134,6 +158,7 @@ src/
     projection.ts               # month-by-month series
     validation.ts               # builds runtime form validation from config
     format.ts / currency.ts / share.ts / utm.ts / lead.ts / email-template.ts
+    booking.ts                  # resolves Cal.com config + env override
   store/calculator-store.ts     # flow stage, lead, theme, currency, UTM
   hooks/useCountUp.ts
 ```

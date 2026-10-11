@@ -301,6 +301,16 @@
     "buttonLabel": "Book a Free Retention Audit",
     "url": "https://example.com/book"
   },
+  "booking": {
+    "enabled": true,
+    "calLink": "your-username/retention-audit",
+    "namespace": "retention-audit",
+    "layout": "month_view",
+    "title": "Book your free retention audit",
+    "description": "Pick a time that works and we'll walk through exactly where your revenue is leaking.",
+    "inline": true,
+    "ctaMode": "popup"
+  },
   "features": {
     "currencySelector": true,
     "darkMode": true,
@@ -312,6 +322,9 @@
       { "code": "EUR", "symbol": "€", "locale": "de-DE" },
       { "code": "GBP", "symbol": "£", "locale": "en-GB" },
       { "code": "INR", "symbol": "₹", "locale": "en-IN" },
+      { "code": "PKR", "symbol": "₨", "locale": "en-PK" },
+      { "code": "CNY", "symbol": "¥", "locale": "zh-CN" },
+      { "code": "JPY", "symbol": "¥", "locale": "ja-JP" },
       { "code": "AUD", "symbol": "A$", "locale": "en-AU" }
     ]
   }

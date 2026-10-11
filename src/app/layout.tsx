@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { config } from "@/lib/config";
 import { currencyOptions } from "@/lib/currency";
+import { resolveBooking } from "@/lib/booking";
 import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AppShell
           brandName={config.theme.brandName ?? config.meta.title}
           cta={config.cta}
+          booking={resolveBooking(config)}
           currencies={config.features.currencySelector ? currencyOptions(config) : []}
         >
           {children}
