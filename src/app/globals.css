@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --font-app-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
+  --brand-primary: #4f46e5;
+  --brand-accent: #06b6d4;
+  --brand-background: #ffffff;
+  --brand-foreground: #0f172a;
+  --brand-muted: #64748b;
+  --brand-surface: #f8fafc;
+  --brand-border: #e2e8f0;
+  --brand-radius: 0.9rem;
+
+  --page-bg: var(--brand-background);
+  --page-fg: var(--brand-foreground);
+  --page-surface: var(--brand-surface);
+  --page-border: var(--brand-border);
+}
+
+.dark {
+  --page-bg: #0b1120;
+  --page-fg: #e2e8f0;
+  --page-surface: #111a2e;
+  --page-border: #1e293b;
+}
+
+@theme inline {
+  --color-primary: var(--brand-primary);
+  --color-accent: var(--brand-accent);
+  --color-background: var(--page-bg);
+  --color-foreground: var(--page-fg);
+  --color-muted: var(--brand-muted);
+  --color-surface: var(--page-surface);
+  --color-border: var(--page-border);
+  --radius-brand: var(--brand-radius);
+  --font-sans: var(--font-app-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  border-color: var(--page-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--page-fg);
+  font-family: var(--font-app-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.grid-backdrop {
+  background-image:
+    radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--brand-primary) 18%, transparent), transparent 45%),
+    radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--brand-accent) 18%, transparent), transparent 40%);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}

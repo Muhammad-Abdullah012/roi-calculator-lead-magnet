@@ -1,0 +1,318 @@
+{
+  "version": "1.0",
+  "meta": {
+    "slug": "saas-churn",
+    "title": "SaaS Churn Cost Calculator",
+    "description": "Calculate how much revenue your SaaS is losing to churn and how much you could recover by improving retention."
+  },
+  "theme": {
+    "brandName": "ChurnLens",
+    "primary": "#4f46e5",
+    "accent": "#06b6d4",
+    "background": "#ffffff",
+    "foreground": "#0f172a",
+    "muted": "#64748b",
+    "surface": "#f8fafc",
+    "border": "#e2e8f0",
+    "radius": "0.9rem",
+    "currency": { "code": "USD", "symbol": "$", "locale": "en-US" }
+  },
+  "landing": {
+    "badge": "Free retention audit tool",
+    "headline": "How much revenue is your SaaS losing to churn?",
+    "subheadline": "Enter your SaaS metrics below to calculate your annual churn cost and discover how much revenue you could recover by improving retention.",
+    "ctaLabel": "Calculate My Churn Cost",
+    "benefits": [
+      "See your monthly and annual revenue loss in seconds",
+      "Quantify wasted acquisition spend caused by churn",
+      "Discover the revenue you could recover by reducing churn"
+    ],
+    "footnote": "No credit card. No signup wall worth the fight. Just your numbers."
+  },
+  "form": {
+    "steps": [
+      {
+        "id": "revenue",
+        "title": "Your revenue",
+        "description": "Let's start with the top line.",
+        "fields": ["mrr"]
+      },
+      {
+        "id": "churn",
+        "title": "Your churn",
+        "description": "How much revenue are you losing each month?",
+        "fields": ["monthlyChurnRate"]
+      },
+      {
+        "id": "costs",
+        "title": "Costs & opportunity",
+        "description": "Optional fields make your report more precise.",
+        "fields": ["grossMarginPercent", "arpa", "cac", "churnReductionPercent"]
+      }
+    ],
+    "fields": [
+      {
+        "key": "mrr",
+        "label": "What is your current Monthly Recurring Revenue?",
+        "type": "currency",
+        "required": true,
+        "default": 25000,
+        "placeholder": "25000",
+        "helper": "Your total recurring revenue for a typical month.",
+        "min": 0,
+        "step": 100
+      },
+      {
+        "key": "monthlyChurnRate",
+        "label": "What is your monthly churn rate?",
+        "type": "percent",
+        "required": true,
+        "default": 5,
+        "placeholder": "5",
+        "helper": "Monthly churn rate = revenue lost this month ÷ starting MRR.",
+        "min": 0,
+        "max": 100,
+        "suffix": "%",
+        "step": 0.1
+      },
+      {
+        "key": "grossMarginPercent",
+        "label": "What is your gross margin?",
+        "type": "percent",
+        "required": true,
+        "default": 80,
+        "placeholder": "80",
+        "helper": "Most SaaS companies have a gross margin between 70% and 90%.",
+        "min": 0,
+        "max": 100,
+        "suffix": "%",
+        "step": 1
+      },
+      {
+        "key": "arpa",
+        "label": "What is your average revenue per account?",
+        "type": "currency",
+        "required": false,
+        "default": 99,
+        "placeholder": "99",
+        "helper": "Used to estimate how many customers you lose each month.",
+        "min": 0,
+        "step": 1
+      },
+      {
+        "key": "cac",
+        "label": "What is your average customer acquisition cost?",
+        "type": "currency",
+        "required": false,
+        "default": 300,
+        "placeholder": "300",
+        "helper": "Used to estimate wasted acquisition spend caused by churn.",
+        "min": 0,
+        "step": 1
+      },
+      {
+        "key": "churnReductionPercent",
+        "label": "If you could reduce churn by this percentage, what would that be worth?",
+        "type": "percent",
+        "required": false,
+        "default": 20,
+        "placeholder": "20",
+        "helper": "The opportunity value of improving retention.",
+        "min": 0,
+        "max": 100,
+        "suffix": "%",
+        "step": 1
+      }
+    ]
+  },
+  "constants": {
+    "months": 12
+  },
+  "formulas": {
+    "monthlyRevenueLost": {
+      "expr": "mrr * (monthlyChurnRate / 100)",
+      "description": "Revenue lost to churn each month."
+    },
+    "annualRevenue": {
+      "expr": "mrr * months",
+      "description": "Annualized recurring revenue."
+    },
+    "annualRevenueLost": {
+      "expr": "monthlyRevenueLost * months",
+      "description": "Revenue lost to churn each year."
+    },
+    "annualProfitLost": {
+      "expr": "annualRevenueLost * (grossMarginPercent / 100)",
+      "description": "Profit impact of churned revenue."
+    },
+    "customersLostPerMonth": {
+      "expr": "monthlyRevenueLost / arpa",
+      "requires": ["arpa"],
+      "description": "Estimated customers lost each month."
+    },
+    "wastedAcquisitionSpendPerMonth": {
+      "expr": "customersLostPerMonth * cac",
+      "requires": ["cac", "arpa"],
+      "description": "Acquisition spend wasted on churned customers each month."
+    },
+    "wastedAcquisitionSpendPerYear": {
+      "expr": "wastedAcquisitionSpendPerMonth * months",
+      "description": "Acquisition spend wasted on churned customers each year."
+    },
+    "reducedMonthlyChurnRate": {
+      "expr": "monthlyChurnRate * (1 - churnReductionPercent / 100)",
+      "requires": ["churnReductionPercent"],
+      "description": "Churn rate after your target reduction."
+    },
+    "newMonthlyRevenueLost": {
+      "expr": "mrr * (reducedMonthlyChurnRate / 100)",
+      "requires": ["churnReductionPercent"],
+      "description": "Monthly revenue lost after the reduction."
+    },
+    "monthlySavings": {
+      "expr": "monthlyRevenueLost - newMonthlyRevenueLost",
+      "requires": ["churnReductionPercent"],
+      "description": "Monthly revenue recovered."
+    },
+    "annualSavingsFromChurnReduction": {
+      "expr": "monthlySavings * months",
+      "description": "Annual revenue recovered by reducing churn."
+    }
+  },
+  "results": {
+    "title": "Your churn cost report",
+    "subtitle": "Here is the financial impact of your current churn rate.",
+    "metrics": [
+      {
+        "key": "monthlyRevenueLost",
+        "label": "Monthly Revenue Lost",
+        "format": "currency"
+      },
+      {
+        "key": "annualRevenueLost",
+        "label": "Annual Revenue Lost",
+        "format": "currency",
+        "highlight": true
+      },
+      {
+        "key": "annualProfitLost",
+        "label": "Annual Profit Lost",
+        "format": "currency"
+      },
+      {
+        "key": "customersLostPerMonth",
+        "label": "Customers Lost Per Month",
+        "format": "number"
+      },
+      {
+        "key": "wastedAcquisitionSpendPerYear",
+        "label": "Wasted Acquisition Spend / Year",
+        "format": "currency"
+      },
+      {
+        "key": "annualSavingsFromChurnReduction",
+        "label": "Potential Annual Savings",
+        "format": "currency",
+        "highlight": true
+      }
+    ],
+    "charts": [
+      {
+        "id": "revVsLoss",
+        "title": "Annual Revenue vs Churn Loss",
+        "description": "How your churn loss compares to total annual revenue.",
+        "type": "bar",
+        "series": [
+          { "key": "annualRevenue", "label": "Annual Revenue" },
+          { "key": "annualRevenueLost", "label": "Lost to Churn" }
+        ]
+      },
+      {
+        "id": "mrrDecline",
+        "title": "12-Month MRR Decline",
+        "description": "Where your MRR lands in 12 months if churn continues with no new sales.",
+        "type": "projection",
+        "projection": {
+          "start": "mrr",
+          "rate": "monthlyChurnRate",
+          "months": "months",
+          "mode": "compounding",
+          "label": "Current churn"
+        }
+      },
+      {
+        "id": "churnCompare",
+        "title": "Current vs Reduced Churn",
+        "description": "The revenue you keep by hitting your churn reduction target.",
+        "type": "projection",
+        "projection": [
+          {
+            "start": "mrr",
+            "rate": "monthlyChurnRate",
+            "months": "months",
+            "mode": "compounding",
+            "label": "Current churn"
+          },
+          {
+            "start": "mrr",
+            "rate": "reducedMonthlyChurnRate",
+            "months": "months",
+            "mode": "compounding",
+            "label": "Reduced churn"
+          }
+        ]
+      }
+    ]
+  },
+  "leadCapture": {
+    "enabled": true,
+    "title": "Your churn cost report is ready.",
+    "subtitle": "Where should we send your full churn analysis?",
+    "buttonLabel": "Send My Report",
+    "successMessage": "Check your inbox — your report is on the way.",
+    "privacyNote": "We'll only email your report. No spam, ever.",
+    "fields": [
+      {
+        "key": "name",
+        "label": "Name",
+        "type": "text",
+        "required": false,
+        "placeholder": "Jane Founder"
+      },
+      {
+        "key": "email",
+        "label": "Work email",
+        "type": "email",
+        "required": true,
+        "placeholder": "jane@company.com"
+      },
+      {
+        "key": "company",
+        "label": "Company",
+        "type": "text",
+        "required": false,
+        "placeholder": "Acme Inc."
+      }
+    ]
+  },
+  "cta": {
+    "headline": "Want to reduce churn and recover this revenue?",
+    "subheadline": "Book a free retention audit and we'll map out exactly where you're leaking revenue.",
+    "buttonLabel": "Book a Free Retention Audit",
+    "url": "https://example.com/book"
+  },
+  "features": {
+    "currencySelector": true,
+    "darkMode": true,
+    "animatedCounters": true,
+    "utmTracking": true,
+    "shareableResults": true,
+    "currencyOptions": [
+      { "code": "USD", "symbol": "$", "locale": "en-US" },
+      { "code": "EUR", "symbol": "€", "locale": "de-DE" },
+      { "code": "GBP", "symbol": "£", "locale": "en-GB" },
+      { "code": "INR", "symbol": "₹", "locale": "en-IN" },
+      { "code": "AUD", "symbol": "A$", "locale": "en-AU" }
+    ]
+  }
+}
