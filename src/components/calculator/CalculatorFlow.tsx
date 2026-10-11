@@ -72,9 +72,11 @@ export function CalculatorFlow({ config }: { config: CalculatorConfig }) {
     if (config.features.utmTracking) setUtm(captureUtm());
   }, [config.features.utmTracking, setUtm]);
 
+  // Only reset scroll when moving between stages (form → lead → results),
+  // not when stepping between form fields, so users keep their place.
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [stage, stepIndex]);
+  }, [stage]);
 
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
 
