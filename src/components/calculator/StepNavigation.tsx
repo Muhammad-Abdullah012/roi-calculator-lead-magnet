@@ -36,7 +36,7 @@ export function StepNavigation({
         </span>
       </div>
 
-      <div className={cn("flex items-center gap-3", isFirst && "justify-end")}>
+      <div className={cn("flex items-center gap-3", isFirst ? "justify-end" : "justify-between")}>
         {!isFirst && (
           <Button variant="ghost" onClick={onBack}>
             Back
