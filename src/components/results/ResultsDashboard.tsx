@@ -5,10 +5,13 @@ import { motion } from "framer-motion";
 import type { CalculationResult } from "@/lib/calculator";
 import type { CalculatorConfig, CurrencyDef } from "@/lib/schema";
 import { encodeState } from "@/lib/share";
+import { resolveBooking } from "@/lib/booking";
+import { useCalculatorStore } from "@/store/calculator-store";
 import { MetricCard } from "./MetricCard";
 import { BarChartCard } from "./charts/BarChartCard";
 import { ProjectionChartCard } from "./charts/ProjectionChartCard";
 import { CtaSection } from "@/components/layout/CtaSection";
+import { CalEmbed } from "@/components/booking/CalEmbed";
 import { Button } from "@/components/ui/Button";
 
 interface ResultsDashboardProps {
@@ -27,6 +30,12 @@ export function ResultsDashboard({
   onEdit,
 }: ResultsDashboardProps) {
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
+  const lead = useCalculatorStore((state) => state.lead);
+  const booking = resolveBooking(config);
+  const prefill =
+    booking && (lead.name || lead.email)
+      ? { name: lead.name, email: lead.email }
+      : undefined;
 
   const share = async () => {
     if (typeof window === "undefined") return;
@@ -82,7 +91,29 @@ export function ResultsDashboard({
         </div>
       )}
 
-      <CtaSection cta={config.cta} />
+      {booking && booking.inline && (
+        <section className="space-y-5">
+          {(booking.title || booking.description) && (
+            <div className="text-center">
+              {booking.title && (
+                <h3 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  {booking.title}
+                </h3>
+              )}
+              {booking.description && (
+                <p className="mx-auto mt-2 max-w-xl text-muted">{booking.description}</p>
+              )}
+            </div>
+          )}
+          <CalEmbed
+            booking={booking}
+            brandColor={config.theme.primary}
+            prefill={prefill}
+          />
+        </section>
+      )}
+
+      <CtaSection cta={config.cta} booking={booking} />
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         {config.features.shareableResults && (

@@ -131,6 +131,21 @@ export const ctaSchema = z.object({
   url: z.string().min(1),
 });
 
+export const bookingSchema = z.object({
+  enabled: z.boolean().default(false),
+  /** Cal.com link in "username/event-slug" form, e.g. "jane/retention-audit". */
+  calLink: z.string().min(1),
+  namespace: z.string().default("book"),
+  layout: z.enum(["month_view", "week_view", "column_view"]).default("month_view"),
+  /** Title/description for the inline embed section on the results page. */
+  title: z.string().optional(),
+  description: z.string().optional(),
+  /** Show the inline calendar on the results page. */
+  inline: z.boolean().default(true),
+  /** How the CTA button behaves: open a modal popup or link out. */
+  ctaMode: z.enum(["popup", "link"]).default("popup"),
+});
+
 export const featuresSchema = z.object({
   currencySelector: z.boolean().default(false),
   darkMode: z.boolean().default(true),
@@ -164,6 +179,7 @@ export const calculatorConfigSchema = z
     }),
     leadCapture: leadCaptureSchema,
     cta: ctaSchema,
+    booking: bookingSchema.optional(),
     features: featuresSchema.default({
       currencySelector: false,
       darkMode: true,
@@ -246,5 +262,6 @@ export type MetricDef = z.infer<typeof metricSchema>;
 export type ProjectionDef = z.infer<typeof projectionSchema>;
 export type ChartDef = z.infer<typeof chartSchema>;
 export type CurrencyDef = z.infer<typeof currencySchema>;
+export type BookingDef = z.infer<typeof bookingSchema>;
 export type CalculatorConfig = z.infer<typeof calculatorConfigSchema>;
 export type CalculatorInput = Record<string, number | string | undefined>;
