@@ -113,7 +113,7 @@ export function ResultsDashboard({
         </section>
       )}
 
-      <CtaSection cta={config.cta} booking={booking} />
+      <CtaSection cta={config.cta} booking={booking} prefill={prefill} />
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         {config.features.shareableResults && (

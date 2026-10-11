@@ -38,6 +38,9 @@ export function AppShell({ brandName, cta, booking, currencies, children }: AppS
   const toggleColorMode = useCalculatorStore((s) => s.toggleColorMode);
   const currencyCode = useCalculatorStore((s) => s.currencyCode);
   const setCurrencyCode = useCalculatorStore((s) => s.setCurrencyCode);
+  const lead = useCalculatorStore((s) => s.lead);
+  const prefill =
+    lead.name || lead.email ? { name: lead.name, email: lead.email } : undefined;
 
   useEffect(() => {
     // Read persisted preferences once, then only persist *future* changes.
@@ -122,6 +125,7 @@ export function AppShell({ brandName, cta, booking, currencies, children }: AppS
             <BookButton
               booking={booking}
               label={cta.buttonLabel}
+              prefill={prefill}
               unstyled
               className="cursor-pointer font-medium text-primary hover:underline"
             />

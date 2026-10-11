@@ -6,9 +6,11 @@ import type { ResolvedBooking } from "@/lib/booking";
 export function CtaSection({
   cta,
   booking,
+  prefill,
 }: {
   cta: CalculatorConfig["cta"];
   booking?: ResolvedBooking | null;
+  prefill?: { name?: string; email?: string };
 }) {
   const usePopup = Boolean(booking && booking.ctaMode === "popup");
   return (
@@ -21,7 +23,7 @@ export function CtaSection({
       )}
       <div className="mt-7">
         {usePopup && booking ? (
-          <BookButton booking={booking} label={cta.buttonLabel} size="lg" />
+          <BookButton booking={booking} label={cta.buttonLabel} size="lg" prefill={prefill} />
         ) : (
           <a
             href={cta.url}
