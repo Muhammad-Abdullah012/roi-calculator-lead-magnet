@@ -13,6 +13,8 @@ interface BookButtonProps {
   variant?: "primary" | "secondary" | "ghost" | "outline";
   className?: string;
   prefill?: { name?: string; email?: string };
+  /** Render a bare button styled entirely by `className` (e.g. inline text link). */
+  unstyled?: boolean;
 }
 
 export function BookButton({
@@ -22,6 +24,7 @@ export function BookButton({
   variant = "primary",
   className,
   prefill,
+  unstyled = false,
 }: BookButtonProps) {
   const colorMode = useCalculatorStore((state) => state.colorMode);
   const [busy, setBusy] = useState(false);
@@ -50,7 +53,7 @@ export function BookButton({
       type="button"
       onClick={open}
       disabled={busy}
-      className={buttonClasses({ variant, size, className })}
+      className={unstyled ? className : buttonClasses({ variant, size, className })}
     >
       {busy ? "Opening…" : label}
     </button>

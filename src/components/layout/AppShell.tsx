@@ -4,11 +4,14 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useCalculatorStore, type ColorMode } from "@/store/calculator-store";
 import { SelectMenu } from "@/components/ui/SelectMenu";
+import { BookButton } from "@/components/booking/BookButton";
 import type { CurrencyDef } from "@/lib/schema";
+import type { ResolvedBooking } from "@/lib/booking";
 
 interface AppShellProps {
   brandName: string;
   cta: { buttonLabel: string; url: string };
+  booking?: ResolvedBooking | null;
   currencies: CurrencyDef[];
   children: React.ReactNode;
 }
@@ -30,7 +33,7 @@ function MoonIcon() {
   );
 }
 
-export function AppShell({ brandName, cta, currencies, children }: AppShellProps) {
+export function AppShell({ brandName, cta, booking, currencies, children }: AppShellProps) {
   const colorMode = useCalculatorStore((s) => s.colorMode);
   const toggleColorMode = useCalculatorStore((s) => s.toggleColorMode);
   const currencyCode = useCalculatorStore((s) => s.currencyCode);
@@ -115,14 +118,23 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
           <span>
             © {new Date().getFullYear()} {brandName}. Built for founders who hate leaking revenue.
           </span>
-          <a
-            href={cta.url}
-            className="font-medium text-primary hover:underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {cta.buttonLabel}
-          </a>
+          {booking && booking.ctaMode === "popup" ? (
+            <BookButton
+              booking={booking}
+              label={cta.buttonLabel}
+              unstyled
+              className="cursor-pointer font-medium text-primary hover:underline"
+            />
+          ) : (
+            <a
+              href={cta.url}
+              className="font-medium text-primary hover:underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {cta.buttonLabel}
+            </a>
+          )}
         </div>
       </footer>
     </div>
