@@ -85,6 +85,19 @@ describe("formula engine", () => {
     expect(skipped).toContain("wastedAcquisitionSpendPerMonth");
   });
 
+  it("does not throw when inputs are incomplete (first render)", () => {
+    const empty = evaluateFormulas({}, config.formulas, config.constants);
+    expect(empty.computed).toEqual({});
+
+    const partial = evaluateFormulas(
+      { mrr: 25000 },
+      config.formulas,
+      config.constants,
+    );
+    expect(partial.computed.monthlyRevenueLost).toBeUndefined();
+    expect(partial.skipped).toContain("monthlyRevenueLost");
+  });
+
   it("detects circular dependencies", () => {
     expect(() =>
       topoSort(

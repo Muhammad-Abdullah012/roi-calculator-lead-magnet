@@ -237,13 +237,13 @@
           "rate": "monthlyChurnRate",
           "months": "months",
           "mode": "compounding",
-          "label": "Current churn"
+          "label": "MRR with current churn"
         }
       },
       {
         "id": "churnCompare",
         "title": "Current vs Reduced Churn",
-        "description": "The revenue you keep by hitting your churn reduction target.",
+        "description": "The MRR you keep over 12 months — the reduced-churn scenario retains more revenue.",
         "type": "projection",
         "projection": [
           {
@@ -251,14 +251,14 @@
             "rate": "monthlyChurnRate",
             "months": "months",
             "mode": "compounding",
-            "label": "Current churn"
+            "label": "MRR kept — current churn"
           },
           {
             "start": "mrr",
             "rate": "reducedMonthlyChurnRate",
             "months": "months",
             "mode": "compounding",
-            "label": "Reduced churn"
+            "label": "MRR kept — reduced churn"
           }
         ]
       }

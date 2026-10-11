@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { useCalculatorStore } from "@/store/calculator-store";
+import { useCalculatorStore, type ColorMode } from "@/store/calculator-store";
 import { Select } from "@/components/ui/Select";
 import type { CurrencyDef } from "@/lib/schema";
 
@@ -33,38 +33,42 @@ function MoonIcon() {
 export function AppShell({ brandName, cta, currencies, children }: AppShellProps) {
   const colorMode = useCalculatorStore((s) => s.colorMode);
   const toggleColorMode = useCalculatorStore((s) => s.toggleColorMode);
-  const setColorMode = useCalculatorStore((s) => s.setColorMode);
   const currencyCode = useCalculatorStore((s) => s.currencyCode);
   const setCurrencyCode = useCalculatorStore((s) => s.setCurrencyCode);
 
   useEffect(() => {
+    // Read persisted preferences once, then only persist *future* changes.
+    // Splitting hydrate from persist avoids the mount race (and StrictMode's
+    // double-invoked effects) where the initial "light" default would clobber
+    // the stored value before it is read back.
+    let mode: ColorMode = "light";
+    let currency: string | null = null;
     try {
-      const stored = localStorage.getItem("roi-color-mode");
-      if (stored === "dark" || stored === "light") setColorMode(stored);
-      const storedCurrency = localStorage.getItem("roi-currency");
-      if (storedCurrency) setCurrencyCode(storedCurrency);
+      const storedMode = localStorage.getItem("roi-color-mode");
+      if (storedMode === "dark" || storedMode === "light") mode = storedMode;
+      currency = localStorage.getItem("roi-currency");
     } catch {
       /* ignore */
     }
-  }, [setColorMode, setCurrencyCode]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", colorMode === "dark");
-    try {
-      localStorage.setItem("roi-color-mode", colorMode);
-    } catch {
-      /* ignore */
-    }
-  }, [colorMode]);
+    useCalculatorStore.setState({
+      colorMode: mode,
+      currencyCode: currency ?? useCalculatorStore.getState().currencyCode,
+    });
+    document.documentElement.classList.toggle("dark", mode === "dark");
 
-  useEffect(() => {
-    if (!currencyCode) return;
-    try {
-      localStorage.setItem("roi-currency", currencyCode);
-    } catch {
-      /* ignore */
-    }
-  }, [currencyCode]);
+    const unsubscribe = useCalculatorStore.subscribe((state) => {
+      document.documentElement.classList.toggle("dark", state.colorMode === "dark");
+      try {
+        localStorage.setItem("roi-color-mode", state.colorMode);
+        if (state.currencyCode) localStorage.setItem("roi-currency", state.currencyCode);
+      } catch {
+        /* ignore */
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <div className="flex min-h-full flex-col">
@@ -98,7 +102,7 @@ export function AppShell({ brandName, cta, currencies, children }: AppShellProps
               type="button"
               onClick={toggleColorMode}
               aria-label="Toggle color theme"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-border text-muted transition-colors hover:text-foreground"
+              className="grid h-10 w-10 cursor-pointer place-items-center rounded-lg border border-border text-muted transition-colors hover:text-foreground"
             >
               {colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
             </button>

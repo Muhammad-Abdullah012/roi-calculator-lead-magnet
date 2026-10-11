@@ -77,6 +77,7 @@ export function evaluateFormulas(
   const parser = createParser();
   const parsed = new Map<string, Expression>();
   const deps = new Map<string, string[]>();
+  const externalVars = new Map<string, string[]>();
 
   for (const [key, def] of Object.entries(formulas)) {
     let expression: Expression;
@@ -87,10 +88,15 @@ export function evaluateFormulas(
         `Failed to parse formula "${key}" (${def.expr}): ${(error as Error).message}`,
       );
     }
+    const variables = expression.variables();
     parsed.set(key, expression);
     deps.set(
       key,
-      expression.variables().filter((name) => name in formulas),
+      variables.filter((name) => name in formulas),
+    );
+    externalVars.set(
+      key,
+      variables.filter((name) => !(name in formulas)),
     );
   }
 
@@ -114,8 +120,14 @@ export function evaluateFormulas(
     const missingDependency = (deps.get(key) ?? []).some(
       (name) => !(name in computed),
     );
+    // Any referenced input/constant that isn't available yet (e.g. during the
+    // first render before defaults settle) skips the formula instead of
+    // throwing an "undefined variable" error.
+    const missingInput = (externalVars.get(key) ?? []).some((name) =>
+      isMissing(scope[name]),
+    );
 
-    if (missingRequirement || missingDependency) {
+    if (missingRequirement || missingDependency || missingInput) {
       skipped.push(key);
       continue;
     }

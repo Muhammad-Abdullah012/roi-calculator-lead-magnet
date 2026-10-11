@@ -44,6 +44,22 @@
   border-color: var(--page-border);
 }
 
+/* Tailwind v4 preflight sets buttons to `cursor: default`; restore the
+   affordance for every clickable element. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+select:not(:disabled),
+label[for],
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 html {
   scroll-behavior: smooth;
 }

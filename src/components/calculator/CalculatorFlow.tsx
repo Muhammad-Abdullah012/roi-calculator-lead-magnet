@@ -72,9 +72,11 @@ export function CalculatorFlow({ config }: { config: CalculatorConfig }) {
     if (config.features.utmTracking) setUtm(captureUtm());
   }, [config.features.utmTracking, setUtm]);
 
+  // Only reset scroll when moving between stages (form → lead → results),
+  // not when stepping between form fields, so users keep their place.
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [stage, stepIndex]);
+  }, [stage]);
 
   const currentStep = steps[Math.min(stepIndex, steps.length - 1)];
 
@@ -235,7 +237,7 @@ export function CalculatorFlow({ config }: { config: CalculatorConfig }) {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
+                  className="cursor-pointer text-sm text-muted underline-offset-4 hover:text-foreground hover:underline"
                 >
                   Back to my inputs
                 </button>
